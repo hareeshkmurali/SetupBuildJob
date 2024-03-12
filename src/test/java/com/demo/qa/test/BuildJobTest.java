@@ -8,30 +8,34 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import io.github.bonigarcia.wdm.WebDriverManager;
+
 
 public class BuildJobTest {
-    WebDriver driver;
+	WebDriver driver;
+	
+	@BeforeMethod
+	public void setUp()
+	{
+		System.setProperty("webdriver.chrome.driver", "D:\\Softwares\\chromedriver.exe");
+		driver=new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); //Implicit wait
+		driver.get("https://demoqa.com/");
+	}
+	
+	@Test
+	public void ToolsQaTest()
+	{
+		driver.findElement(By.xpath("(//div[@class=\"card-up\"])[1]")).click();
+		String expectedtext="Elements";
+		String actualtext=driver.findElement(By.xpath("(//div[contains(text(),\"Elements\")])[1]")).getText();
+		Assert.assertEquals(expectedtext, actualtext, "Message is not Displaying as expected");
+	}
+	
+	@AfterMethod
+	public void tearDown()
+	{
+		driver.close();
+	}
 
-    @BeforeMethod
-    public void setUp() {
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); // Implicit wait
-        driver.get("https://demoqa.com/");
-    }
-
-    @Test
-    public void ToolsQaTest() {
-        driver.findElement(By.xpath("(//div[@class=\"card-up\"])[1]")).click();
-        String expectedtext = "Elements";
-        String actualtext = driver.findElement(By.xpath("(//div[contains(text(),\"Elements\")])[1]")).getText();
-        Assert.assertEquals(expectedtext, actualtext, "Message is not Displaying as expected");
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        driver.quit(); // Using quit() to close all browser windows
-    }
 }
